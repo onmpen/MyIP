@@ -27,7 +27,6 @@ export const probeCardRows: ProbeCardConfig[][] = [
     { providerId: "bytedance-cn", title: "从国内网站查询", source: "数据来自 字节跳动" },
   ],
   [
-    { providerId: "cloudflare-cn-trace", title: "从国内网站查询", source: "数据来自 Cloudflare 中国" },
     { providerId: "qualcomm-cn-trace", title: "从国内网站查询", source: "数据来自 高通中国" },
     { providerId: "bytedance-global", title: "从国外网站查询", source: "数据来自 字节跳动" },
   ],

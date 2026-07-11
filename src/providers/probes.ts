@@ -73,7 +73,6 @@ export const probeProviders: ProbeProvider[] = [
     },
   },
   ...cloudflareTraceProviders([
-    ["cloudflare-cn-trace", "Cloudflare 中国", "国内", "www.qualcomm.cn", "从 www.qualcomm.cn 的 Cloudflare trace 获取访问 Cloudflare 中国节点时的出口 IP。"],
     ["qualcomm-cn-trace", "高通中国", "国内", "www.qualcomm.cn", "从 www.qualcomm.cn 的 Cloudflare trace 获取访问高通中国时的出口 IP。"],
   ]),
   {
