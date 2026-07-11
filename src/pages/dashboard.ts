@@ -80,8 +80,12 @@ async function renderSelectedGeo(result: ProbeResult): Promise<void> {
 
   const selectedProvider = selectedGeoProvider();
   if (selectedProvider) {
+    const selectedProviderId = selectedProvider.id;
     setText(target.geo, "归属地查询中");
     const geoResult = await selectedProvider.lookup(result.ip);
+    if (geoProviderSelect.value !== selectedProviderId) {
+      return;
+    }
     setText(target.geo, formatGeoResults([geoResult]));
     return;
   }
