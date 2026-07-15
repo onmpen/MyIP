@@ -279,6 +279,9 @@ const cloudflareColoNames: Record<string, string> = {
   "SJO": "San José, Costa Rica",
   "SJP": "São José do Rio Preto, Brazil",
   "SJU": "San Juan, Puerto Rico",
+  // Cloudflare's status API labels SJW as Hengshui, although IATA assigns
+  // SJW to Shijiazhuang Zhengding International Airport. Prefer Cloudflare's
+  // own colo label here: the code alone does not establish the facility city.
   "SJW": "Hengshui, China",
   "SKG": "Thessaloniki, Greece",
   "SKP": "Skopje, North Macedonia",

@@ -6,52 +6,51 @@ export interface CloudflareProbeDefinition {
 }
 
 function builtIn(
-  id: string,
   name: string,
   hostname: string,
   fallbackHostname?: string,
 ): CloudflareProbeDefinition {
   return {
-    id,
+    id: cloudflareProbeId(hostname),
     name,
     traceUrl: traceUrl(hostname),
     fallbackTraceUrl: fallbackHostname ? traceUrl(fallbackHostname) : undefined,
   };
 }
 
-export const homeCloudflareProbeIds = ["chatgpt-trace", "claude-trace", "grok-trace"] as const;
+export const homeCloudflareProbeIds = ["chatgpt-com", "claude-ai", "grok-com"] as const;
 
 export const builtInCloudflareProbes: CloudflareProbeDefinition[] = [
-  builtIn("chatgpt-trace", "ChatGPT", "chatgpt.com"),
-  builtIn("claude-trace", "Claude", "claude.ai"),
-  builtIn("grok-trace", "Grok", "grok.com"),
-  builtIn("qualcomm-cn-trace", "高通中国", "www.qualcomm.cn"),
-  builtIn("discord-trace", "Discord", "discord.com", "gateway.discord.gg"),
-  builtIn("x-trace", "X", "x.com"),
-  builtIn("medium-trace", "Medium", "medium.com"),
-  builtIn("anthropic-trace", "Anthropic", "anthropic.com"),
-  builtIn("openai-trace", "OpenAI", "openai.com"),
-  builtIn("sora-trace", "Sora", "sora.com"),
-  builtIn("pixpix-trace", "PixPix", "pixpix.com"),
-  builtIn("perplexity-trace", "Perplexity", "www.perplexity.ai"),
-  builtIn("midjourney-trace", "Midjourney", "midjourney.com"),
-  builtIn("coinbase-trace", "Coinbase", "coinbase.com"),
-  builtIn("okx-trace", "OKX", "www.okx.com"),
-  builtIn("crypto-trace", "Crypto.com", "crypto.com"),
-  builtIn("zoom-trace", "Zoom", "zoom.us"),
-  builtIn("onepassword-trace", "1Password", "1password.com"),
-  builtIn("wise-trace", "Wise", "wise.com"),
-  builtIn("notion-trace", "Notion", "notion.so"),
-  builtIn("shopify-trace", "Shopify", "shopify.com"),
-  builtIn("godaddy-trace", "GoDaddy", "godaddy.com"),
-  builtIn("producthunt-trace", "Product Hunt", "producthunt.com"),
-  builtIn("cdnjs-trace", "Cloudflare cdnjs", "cdnjs.cloudflare.com"),
-  builtIn("npm-trace", "npm registry", "registry.npmjs.org"),
-  builtIn("kali-trace", "Kali Download", "kali.download"),
-  builtIn("unpkg-trace", "unpkg", "unpkg.com"),
-  builtIn("nodejs-trace", "Node.js", "nodejs.org"),
-  builtIn("gitlab-trace", "GitLab", "gitlab.com"),
-  builtIn("crunchyroll-trace", "Crunchyroll", "crunchyroll.com"),
+  builtIn("ChatGPT", "chatgpt.com"),
+  builtIn("Claude", "claude.ai"),
+  builtIn("Grok", "grok.com"),
+  builtIn("高通中国", "www.qualcomm.cn"),
+  builtIn("Discord", "discord.com", "gateway.discord.gg"),
+  builtIn("X", "x.com"),
+  builtIn("Medium", "medium.com"),
+  builtIn("Anthropic", "anthropic.com"),
+  builtIn("OpenAI", "openai.com"),
+  builtIn("Sora", "sora.com"),
+  builtIn("PixPix", "pixpix.com"),
+  builtIn("Perplexity", "www.perplexity.ai"),
+  builtIn("Midjourney", "midjourney.com"),
+  builtIn("Coinbase", "coinbase.com"),
+  builtIn("OKX", "www.okx.com"),
+  builtIn("Crypto.com", "crypto.com"),
+  builtIn("Zoom", "zoom.us"),
+  builtIn("1Password", "1password.com"),
+  builtIn("Wise", "wise.com"),
+  builtIn("Notion", "notion.so"),
+  builtIn("Shopify", "shopify.com"),
+  builtIn("GoDaddy", "godaddy.com"),
+  builtIn("Product Hunt", "producthunt.com"),
+  builtIn("Cloudflare cdnjs", "cdnjs.cloudflare.com"),
+  builtIn("npm registry", "registry.npmjs.org"),
+  builtIn("Kali Download", "kali.download"),
+  builtIn("unpkg", "unpkg.com"),
+  builtIn("Node.js", "nodejs.org"),
+  builtIn("GitLab", "gitlab.com"),
+  builtIn("Crunchyroll", "crunchyroll.com"),
 ];
 
 export function normalizeCloudflareProbeInput(input: string): Pick<CloudflareProbeDefinition, "name" | "traceUrl"> {
@@ -71,7 +70,7 @@ export function normalizeCloudflareProbeInput(input: string): Pick<CloudflarePro
   if (url.protocol !== "https:") {
     throw new Error("仅支持 HTTPS 地址");
   }
-  if (url.username || url.password || !isDomainName(url.hostname)) {
+  if (url.username || url.password || url.port || !isDomainName(url.hostname)) {
     throw new Error("域名或地址格式无效");
   }
 
@@ -86,12 +85,17 @@ export function normalizeCloudflareProbeInput(input: string): Pick<CloudflarePro
   };
 }
 
-export function createCustomCloudflareProbe(input: string): CloudflareProbeDefinition {
+export function createCustomCloudflareProbe(input: string, name?: string): CloudflareProbeDefinition {
   const normalized = normalizeCloudflareProbeInput(input);
   return {
-    id: `custom-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`,
+    id: cloudflareProbeId(new URL(normalized.traceUrl).hostname),
     ...normalized,
+    name: name?.trim() || normalized.name,
   };
+}
+
+export function cloudflareProbeId(hostname: string): string {
+  return hostname.toLowerCase().replace(/-/g, "_").replace(/\./g, "-");
 }
 
 function traceUrl(hostname: string): string {

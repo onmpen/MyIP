@@ -48,9 +48,9 @@ export const homeProbeCardSections: ProbeCardSection[] = [
     title: "海外 AI 服务",
     rows: [
       [
-        { providerId: "chatgpt-trace", title: "从国外网站查询", source: "数据来自 ChatGPT" },
-        { providerId: "claude-trace", title: "从国外网站查询", source: "数据来自 Claude" },
-        { providerId: "grok-trace", title: "从国外网站查询", source: "数据来自 Grok" },
+        { providerId: "chatgpt-com", title: "从国外网站查询", source: "数据来自 ChatGPT" },
+        { providerId: "claude-ai", title: "从国外网站查询", source: "数据来自 Claude" },
+        { providerId: "grok-com", title: "从国外网站查询", source: "数据来自 Grok" },
       ],
     ],
   },
@@ -98,7 +98,7 @@ export function connectivityCardTarget(checkId: string): string {
 function providerDomId(providerId: string): string {
   const targetByProviderId: Record<string, string> = {
     "cn-ipv4": "cn-ipv4",
-    "claude-trace": "claude",
+    "claude-ai": "claude",
     webrtc: "webrtc",
     ipipnet: "ipipnet",
     pchome: "pchome",
@@ -107,5 +107,5 @@ function providerDomId(providerId: string): string {
     ipbase: "ipbase",
   };
 
-  return targetByProviderId[providerId] || providerId.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
+  return targetByProviderId[providerId] || providerId.replace(/[^a-z0-9_-]+/gi, "-").replace(/^-|-$/g, "");
 }

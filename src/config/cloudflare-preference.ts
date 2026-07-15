@@ -1,6 +1,7 @@
 import {
   type CloudflareProbeDefinition,
   builtInCloudflareProbes,
+  cloudflareProbeId,
   normalizeCloudflareProbeInput,
 } from "./cloudflare-probes";
 
@@ -10,7 +11,7 @@ interface StoredCloudflarePreference {
 }
 
 const storageKey = "myip.cloudflare.preference.v1";
-const maxStoredProbes = 100;
+export const maxCloudflareProbeCount = 100;
 
 export function defaultCloudflareProbes(): CloudflareProbeDefinition[] {
   return builtInCloudflareProbes.map((probe) => ({ ...probe }));
@@ -30,8 +31,8 @@ export function parseCloudflareProbes(raw: string | null): CloudflareProbeDefini
     const seenIds = new Set<string>();
     const seenUrls = new Set<string>();
     const probes: CloudflareProbeDefinition[] = [];
-    for (const candidate of stored.probes.slice(0, maxStoredProbes)) {
-      if (!candidate || typeof candidate.id !== "string" || typeof candidate.traceUrl !== "string") {
+    for (const candidate of stored.probes.slice(0, maxCloudflareProbeCount)) {
+      if (!candidate || typeof candidate.traceUrl !== "string") {
         continue;
       }
       let normalized: ReturnType<typeof normalizeCloudflareProbeInput>;
@@ -40,8 +41,8 @@ export function parseCloudflareProbes(raw: string | null): CloudflareProbeDefini
       } catch {
         continue;
       }
-      const id = candidate.id.trim();
-      if (!id || seenIds.has(id) || seenUrls.has(normalized.traceUrl)) {
+      const id = cloudflareProbeId(new URL(normalized.traceUrl).hostname);
+      if (seenIds.has(id) || seenUrls.has(normalized.traceUrl)) {
         continue;
       }
       const fallbackTraceUrl = normalizeFallback(candidate.fallbackTraceUrl);
@@ -69,6 +70,9 @@ export function loadCloudflareProbes(): CloudflareProbeDefinition[] {
 }
 
 export function saveCloudflareProbes(probes: CloudflareProbeDefinition[]): boolean {
+  if (probes.length > maxCloudflareProbeCount) {
+    return false;
+  }
   const preference: StoredCloudflarePreference = { version: 1, probes };
   try {
     window.localStorage.setItem(storageKey, JSON.stringify(preference));
