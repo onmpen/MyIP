@@ -7,7 +7,7 @@ import { requireElement } from "../ui/dom";
 const probeTargets: Record<string, { ip: string; geo?: string; enabledInSimple: boolean }> = {
   webrtc: { ip: "ip-webrtc", geo: "ip-webrtc-geo", enabledInSimple: false },
   ipipnet: { ip: "ip-ipipnet", enabledInSimple: true },
-  pchome: { ip: "ip-pchome", geo: "ip-pchome-geo", enabledInSimple: true },
+  "cn-ipv4": { ip: "ip-cn-ipv4", geo: "ip-cn-ipv4-geo", enabledInSimple: true },
   "ip-sb": { ip: "ip-ipsb", geo: "ip-ipsb-geo", enabledInSimple: true },
   ipapi: { ip: "ip-ipapi", geo: "ip-ipapi-geo", enabledInSimple: true },
 };
